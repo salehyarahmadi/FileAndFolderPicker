@@ -51,7 +51,7 @@ dependencies {
 
 For select single file
 ```java
-if(storagePermissionGranted()) {
+if(permissionGranted()) {
     SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
             () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
             files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
@@ -64,7 +64,7 @@ else{
 
 For select multiple files
 ```java
-if(storagePermissionGranted()) {
+if(permissionGranted()) {
     MultiFilePickerDialog multiFilePickerDialog = new MultiFilePickerDialog(this,
             () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
             files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show()
@@ -78,7 +78,7 @@ else{
 
 For select directory
 ```java
-if(storagePermissionGranted()) {
+if(permissionGranted()) {
     DirectoryPickerDialog directoryPickerDialog = new DirectoryPickerDialog(this,
             () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
             files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show()
