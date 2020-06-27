@@ -90,6 +90,17 @@ else{
 }
 ```
 
+Permissions
+```java
+private boolean permissionGranted(){
+    return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+}
+private void requestPermission(){
+    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+}
+```
+
 In all types, you receive an array of files. In case of single file and directory picker, you have to use index 0 of files array. But in multiple files picker you can use all indices of array.
 
     
