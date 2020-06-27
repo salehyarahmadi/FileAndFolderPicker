@@ -51,31 +51,43 @@ dependencies {
 
 For select single file
 ```java
-if(permissionGranted()) {
-                SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
-                        () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
-                singleFilePickerDialog.show();
-            }
-            else{
-                requestPermission();
-            }
+if(storagePermissionGranted()) {
+    SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
+            () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+            files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
+    singleFilePickerDialog.show();
+}
+else{
+    requestPermission();
+}
 ```
 
 For select multiple files
 ```java
-MultiFilePickerDialog multiFilePickerDialog = new MultiFilePickerDialog(this,
-           () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-           files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
-multiFilePickerDialog.show();
+if(storagePermissionGranted()) {
+    MultiFilePickerDialog multiFilePickerDialog = new MultiFilePickerDialog(this,
+            () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+            files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show()
+    );
+    multiFilePickerDialog.show();
+}
+else{
+    requestPermission();
+}
 ```
 
 For select directory
 ```java
-DirectoryPickerDialog directoryPickerDialog = new DirectoryPickerDialog(this,
-           () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-           files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
-directoryPickerDialog.show();
+if(storagePermissionGranted()) {
+    DirectoryPickerDialog directoryPickerDialog = new DirectoryPickerDialog(this,
+            () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+            files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show()
+    );
+    directoryPickerDialog.show();
+}
+else{
+    requestPermission();
+}
 ```
 
 In all types, you receive an array of files. In case of single file and directory picker, you have to use index 0 of files array. But in multiple files picker you can use all indices of array.
