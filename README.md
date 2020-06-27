@@ -73,6 +73,8 @@ DirectoryPickerDialog directoryPickerDialog = new DirectoryPickerDialog(this,
 directoryPickerDialog.show();
 ```
 
+In all types, you receive an array of files. In case of single file and directory picker, you have to use index 0 of files array. But in multiple files picker you can use all indices of array.
+
     
     
 
