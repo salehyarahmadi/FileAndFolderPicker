@@ -38,7 +38,7 @@ Step 2. Add the dependency
 ```gradle
 // builde.gradle(app level)
 dependencies {
-    implementation 'com.github.salehyarahmadi:FileAndFolderPicker:1.0.2'
+    implementation 'com.github.salehyarahmadi:FileAndFolderPicker:1.0.4'
 }
 ```
  
