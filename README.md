@@ -51,10 +51,15 @@ dependencies {
 
 For select single file
 ```java
-SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
-           () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-           files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
-singleFilePickerDialog.show();
+if(permissionGranted()) {
+                SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
+                        () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
+                singleFilePickerDialog.show();
+            }
+            else{
+                requestPermission();
+            }
 ```
 
 For select multiple files
