@@ -49,12 +49,28 @@ dependencies {
 
 ### Java
 
-
+For select single file
 ```java
 SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
            () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
            files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
 singleFilePickerDialog.show();
+```
+
+For select multiple files
+```java
+MultiFilePickerDialog multiFilePickerDialog = new MultiFilePickerDialog(this,
+           () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+           files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
+multiFilePickerDialog.show();
+```
+
+For select directory
+```java
+DirectoryPickerDialog directoryPickerDialog = new DirectoryPickerDialog(this,
+           () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+           files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
+directoryPickerDialog.show();
 ```
 
     
