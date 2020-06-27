@@ -1,4 +1,4 @@
-DataTable ![API](https://img.shields.io/badge/API-17%2B-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+FileAndFolderPicker ![API](https://img.shields.io/badge/API-17%2B-brightgreen.svg?style=flat) [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 ===================
 
 DataTable is a library for create material data table simply. In this version it is only possible to create tables with string values.
@@ -18,10 +18,7 @@ Soon, image fields, checkbox fields, input fields and etc will be possible.
 `this library is compatible to androidx`
 
 ## Preview
-![screenshot 1](https://github.com/salehyarahmadi/DataTable/blob/master/1.jpg)
-![screenshot 2](https://github.com/salehyarahmadi/DataTable/blob/master/2.jpg)
-![screenshot 3](https://github.com/salehyarahmadi/DataTable/blob/master/3.jpg)
-![screenshot 4](https://github.com/salehyarahmadi/DataTable/blob/master/4.jpg)
+![screenshot 1](https://github.com/salehyarahmadi/FileAndFolderPicker/blob/master/1.jpg)
 
 ## Setup
 The simplest way to use this library is to add the library as dependency to your build.
