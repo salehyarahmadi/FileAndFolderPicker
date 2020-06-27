@@ -37,6 +37,17 @@ Step 2. Add the dependency
   
 ```gradle
 // builde.gradle(app level)
+android{
+	...
+	compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+        dataBinding {
+            enabled = true
+        }
+}
+
 dependencies {
     implementation 'com.github.salehyarahmadi:FileAndFolderPicker:1.0.4'
 }
