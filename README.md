@@ -12,7 +12,6 @@ This is a library for create a picker in your android application. You can pick 
 
 
 
-
 `this library is compatible to androidx`
 
 ## Preview
