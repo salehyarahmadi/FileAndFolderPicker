@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="selected_color_transparent">#88909090</color>
+    <color name="folder_color">#0099aa</color>
+    <color name="storage_progress_color">#0099aa</color>
+    <color name="fab_color">#0099aa</color>
+</resources>

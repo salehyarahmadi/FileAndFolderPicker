@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="gray_5">#555</color>
+    <color name="gray_40">#404040</color>
+    <color name="white">#fff</color>
+
+<!--    <color name="folder_color">#fcba48</color>-->
+    <color name="folder_color">#0099aa</color>
+    <color name="selected_color_transparent">#88909090</color>
+<!--    <color name="storage_progress_color">#ff4220</color>-->
+<!--    <color name="storage_progress_color">#B00020</color>-->
+<!--    <color name="storage_progress_color">#fcba48</color>-->
+    <color name="storage_progress_color">#0088aa</color>
+    <color name="music_category_default_color">#ff4248</color>
+    <color name="document_category_default_color">#00b1f1</color>
+    <color name="unknown_category_default_color">#ff7a54</color>
+    <color name="fab_color">#00aaff</color>
+    <color name="gray_c7">#c7c7c7</color>
+    <color name="gray_d">#ddd</color>
+</resources>
