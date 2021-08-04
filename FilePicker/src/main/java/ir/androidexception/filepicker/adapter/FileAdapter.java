@@ -2,20 +2,22 @@ package ir.androidexception.filepicker.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import ir.androidexception.filepicker.R;
 import ir.androidexception.filepicker.databinding.ItemFileBinding;
 import ir.androidexception.filepicker.interfaces.OnPathChangeListener;
@@ -35,6 +37,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private boolean multiFileSelect = false;
     private boolean directorySelect = false;
     private List<File> files;
+    private List<String> format = new ArrayList<>();
 
     public FileAdapter(Context context, List<Item> items, OnPathChangeListener onPathChangeListener, OnSelectItemListener onSelectItemListener) {
         this.context = context;
@@ -44,12 +47,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         files = new ArrayList<>();
     }
 
+    public FileAdapter(Context context, List<Item> items, OnPathChangeListener onPathChangeListener, OnSelectItemListener onSelectItemListener, List<String> format) {
+        this.context = context;
+        this.items = items;
+        this.onPathChangeListener = onPathChangeListener;
+        this.onSelectItemListener = onSelectItemListener;
+        files = new ArrayList<>();
+        this.format = format;
+    }
+
     @NonNull
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(inflater==null)
+        if (inflater == null)
             inflater = LayoutInflater.from(parent.getContext());
-        return new FileViewHolder(DataBindingUtil.inflate(inflater, R.layout.item_file,parent,false));
+        return new FileViewHolder(DataBindingUtil.inflate(inflater, R.layout.item_file, parent, false));
     }
 
     @Override
@@ -59,7 +71,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public int getItemCount() {
-        if(items!=null)
+        if (items != null)
             return items.size();
         else
             return 0;
@@ -74,24 +86,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
 
-
-    public void select(int position){
-        if(this.multiFileSelect){
-            if(items.get(position).isSelected()) {
+    public void select(int position) {
+        if (this.multiFileSelect) {
+            if (items.get(position).isSelected()) {
                 items.get(position).setSelected(false);
-                for(int i=0; i<files.size(); i++)
-                    if(files.get(i).getPath().equals(items.get(position).getFile().getPath()))
+                for (int i = 0; i < files.size(); i++)
+                    if (files.get(i).getPath().equals(items.get(position).getFile().getPath()))
                         files.remove(i);
-            }
-            else {
+            } else {
                 items.get(position).setSelected(true);
                 files.add(items.get(position).getFile());
             }
             notifyItemChanged(position);
-        }
-        else{
-            for(int i=0; i<items.size(); i++){
-                if(items.get(i).isSelected()) {
+        } else {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).isSelected()) {
                     items.get(i).setSelected(false);
                     notifyItemChanged(i);
                 }
@@ -101,22 +110,27 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         }
     }
 
-    public void back(){
+    public void back() {
         File currentPathFile = new File(currentPath);
         File parent = currentPathFile.getParentFile();
-        if(parent!=null) {
+        if (parent != null) {
             File[] files = parent.listFiles();
             List<Item> itemList = new ArrayList<>();
             if (files != null) {
-                if(directorySelect){
-                    for(File f : files){
-                        if(f.isDirectory())
+                if (directorySelect) {
+                    for (File f : files) {
+                        if (f.isDirectory())
                             itemList.add(new Item(f));
                     }
-                }
-                else{
-                    for(File f : files){
-                        itemList.add(new Item(f));
+                } else {
+                    for (File f : files) {
+                        if (!this.format.isEmpty()) {
+                            if (this.format.contains(Util.getFileExtension(f)) || Util.getFileCategory(f) == Util.FOLDER_CATEGORY) {
+                                itemList.add(new Item(f));
+                            }
+                        } else {
+                            itemList.add(new Item(f));
+                        }
                     }
                 }
 
@@ -124,33 +138,34 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                 notifyDataSetChanged();
                 currentPath = parent.getPath();
                 onPathChangeListener.onChanged(currentPath);
-                if(!this.multiFileSelect  && onSelectItemListener!=null)
+                if (!this.multiFileSelect && onSelectItemListener != null)
                     onSelectItemListener.onSelected(null);
             }
         }
     }
 
-    class FileViewHolder extends RecyclerView.ViewHolder{
+    class FileViewHolder extends RecyclerView.ViewHolder {
         private ItemFileBinding itemFileBinding;
+
         public FileViewHolder(ItemFileBinding itemFileBinding) {
             super(itemFileBinding.getRoot());
             this.itemFileBinding = itemFileBinding;
         }
 
-        public void bind(Context context, Item item){
-            for(File f : files){
-                if(f.getPath().equals(item.getFile().getPath())) item.setSelected(true);
+        public void bind(Context context, Item item) {
+            for (File f : files) {
+                if (f.getPath().equals(item.getFile().getPath())) item.setSelected(true);
             }
 
-            switch (Util.getFileCategory(item.getFile())){
+            switch (Util.getFileCategory(item.getFile())) {
                 case Util.FOLDER_CATEGORY:
                     GlideApp.with(context)
                             .applyDefaultRequestOptions(new RequestOptions()
-                                .dontAnimate()
-                                .centerCrop()
-                                .override(200,200)
-                                .skipMemoryCache(true)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .dontAnimate()
+                                    .centerCrop()
+                                    .override(200, 200)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                             )
                             .load(R.drawable.ic_folder)
                             .into(itemFileBinding.ivItemFile);
@@ -164,12 +179,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     break;
                 case Util.MUSIC_CATEGORY:
                     Bitmap coverImage = Util.fetchMusicCover(item.getFile());
-                    if(coverImage!=null){
+                    if (coverImage != null) {
                         GlideApp.with(context).load(coverImage).into(itemFileBinding.ivItemFile);
                         itemFileBinding.ivItemFileFileType.setVisibility(View.VISIBLE);
                         GlideApp.with(context).load(R.drawable.ic_play_music).into(itemFileBinding.ivItemFileFileType);
-                    }
-                    else {
+                    } else {
                         GlideApp.with(context).load(R.drawable.ic_music).into(itemFileBinding.ivItemFile);
                         itemFileBinding.ivItemFileFileType.setVisibility(View.GONE);
                     }
@@ -179,22 +193,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     itemFileBinding.ivItemFileFileType.setVisibility(View.GONE);
                     break;
                 case Util.DOCUMENT_CATEGORY:
-                    if(item.getFile().getName().endsWith(".pdf")){
+                    if (item.getFile().getName().endsWith(".pdf")) {
                         GlideApp.with(context).load(R.drawable.ic_pdf).into(itemFileBinding.ivItemFile);
-                    }
-                    else if(item.getFile().getName().endsWith(".txt")){
+                    } else if (item.getFile().getName().endsWith(".txt")) {
                         GlideApp.with(context).load(R.drawable.ic_txt).into(itemFileBinding.ivItemFile);
-                    }
-                    else if(item.getFile().getName().endsWith(".ppt") || item.getFile().getName().endsWith(".pptx") ){
+                    } else if (item.getFile().getName().endsWith(".ppt") || item.getFile().getName().endsWith(".pptx")) {
                         GlideApp.with(context).load(R.drawable.ic_ppt).into(itemFileBinding.ivItemFile);
-                    }
-                    else if(item.getFile().getName().endsWith(".xls") || item.getFile().getName().endsWith(".xlsx") ){
+                    } else if (item.getFile().getName().endsWith(".xls") || item.getFile().getName().endsWith(".xlsx")) {
                         GlideApp.with(context).load(R.drawable.ic_xls).into(itemFileBinding.ivItemFile);
-                    }
-                    else if(item.getFile().getName().endsWith(".doc") || item.getFile().getName().endsWith(".docx") ){
+                    } else if (item.getFile().getName().endsWith(".doc") || item.getFile().getName().endsWith(".docx")) {
                         GlideApp.with(context).load(R.drawable.ic_doc).into(itemFileBinding.ivItemFile);
-                    }
-                    else{
+                    } else {
                         GlideApp.with(context).load(R.drawable.ic_unknown_format).into(itemFileBinding.ivItemFile);
                     }
                     itemFileBinding.ivItemFileFileType.setVisibility(View.GONE);
@@ -204,22 +213,31 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     itemFileBinding.ivItemFileFileType.setVisibility(View.GONE);
             }
             itemFileBinding.setItem(item);
-            itemFileBinding.getRoot().setOnClickListener( view -> {
+            itemFileBinding.getRoot().setOnClickListener(view -> {
                 File file = item.getFile();
-                if(file.isDirectory()){
+                if (file.isDirectory()) {
                     // Click On Directory
                     List<Item> newItems = new ArrayList<>();
                     File[] children = file.listFiles();
-                    if(children!=null){
-                        if(directorySelect){
+                    if (children != null) {
+                        if (directorySelect) {
                             for (File f : children) {
-                                if(f.isDirectory())
+                                if (f.isDirectory())
                                     newItems.add(new Item(f));
                             }
-                        }
-                        else{
+                        } else {
                             for (File f : children) {
-                                newItems.add(new Item(f));
+                                if (!format.isEmpty()) {
+                                    if (format.contains(Util.getFileExtension(f)) || Util.getFileCategory(f) == Util.FOLDER_CATEGORY) {
+                                        Log.e("File", "Masuk");
+                                        Log.e("File", format.toString());
+
+                                        newItems.add(new Item(f));
+                                    }
+                                } else {
+                                    newItems.add(new Item(f));
+                                    Log.e("FileAdapter", format.toString());
+                                }
                             }
                         }
                         items = newItems;
@@ -229,11 +247,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
                     currentPath = file.getPath();
                     onPathChangeListener.onChanged(currentPath);
-                    if(!multiFileSelect && onSelectItemListener!=null)
+                    if (!multiFileSelect && onSelectItemListener != null)
                         onSelectItemListener.onSelected(null);
 
-                }
-                else{
+                } else {
                     // Click On File
                     select(getAdapterPosition());
                     onSelectItemListener.onSelected(file);

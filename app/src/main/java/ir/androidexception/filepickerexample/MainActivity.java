@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.Format;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import ir.androidexception.filepicker.dialog.DirectoryPickerDialog;
 import ir.androidexception.filepicker.dialog.MultiFilePickerDialog;
@@ -27,15 +31,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
-
-
+        List<String> Formats = Collections.singletonList(
+                "pdf"
+        );
         Button singleFilePickerButton = findViewById(R.id.btn_single_file_picker);
         singleFilePickerButton.setOnClickListener(view -> {
             if(permissionGranted()) {
                 SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
                         () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show());
+                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show(),
+                        Formats);
                 singleFilePickerDialog.show();
             }
             else{
@@ -49,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
             if(permissionGranted()) {
                 MultiFilePickerDialog multiFilePickerDialog = new MultiFilePickerDialog(this,
                         () -> Toast.makeText(MainActivity.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show()
+                        files -> Toast.makeText(MainActivity.this, files[0].getPath(), Toast.LENGTH_SHORT).show(),
+                        Formats
                 );
                 multiFilePickerDialog.show();
             }

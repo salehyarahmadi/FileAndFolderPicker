@@ -39,12 +39,25 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
     private OnCancelPickerDialogListener onCancelPickerDialogListener;
     private OnConfirmDialogListener onConfirmDialogListener;
     private List<File> files;
+
+    private List<String> formats = new ArrayList<>();
+
     public MultiFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
                                  OnConfirmDialogListener onConfirmDialogListener) {
         super(context);
         this.context = context;
         this.onCancelPickerDialogListener = onCancelPickerDialogListener;
         this.onConfirmDialogListener = onConfirmDialogListener;
+    }
+
+    public MultiFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
+                                 OnConfirmDialogListener onConfirmDialogListener, List<String> formats) {
+        super(context);
+        this.context = context;
+        this.onCancelPickerDialogListener = onCancelPickerDialogListener;
+        this.onConfirmDialogListener = onConfirmDialogListener;
+        this.formats = formats;
+
     }
 
 
@@ -95,8 +108,19 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
         List<Item> items = new ArrayList<>();
         File internalStorage = Environment.getExternalStorageDirectory();
         List<File> children = new ArrayList<>(Arrays.asList(Objects.requireNonNull(internalStorage.listFiles())));
-        for (File file : children){
-            items.add(new Item(file));
+        for (File file : children) {
+            if (!formats.isEmpty()) {
+                if (formats.contains(Util.getFileExtension(file)) || Util.getFileCategory(file) == Util.FOLDER_CATEGORY) {
+                    items.add(new Item(file));
+                }
+            } else {
+                items.add(new Item(file));
+            }
+        }
+        if (formats.isEmpty()) {
+            adapter = new FileAdapter(context, items, this, this);
+        } else {
+            adapter = new FileAdapter(context, items, this, this, formats);
         }
 
 //        items.add(new Item(internalStorage));
@@ -105,7 +129,6 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
 //            items.add(new Item(new File(sdPath)));
 //        }
 
-        adapter = new FileAdapter(context, items, this, this);
         adapter.setMultiFileSelect(true);
         recyclerViewDirectories.setAdapter(adapter);
         recyclerViewDirectories.setNestedScrollingEnabled(false);

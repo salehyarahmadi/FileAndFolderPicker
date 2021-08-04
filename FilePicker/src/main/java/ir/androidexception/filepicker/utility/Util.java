@@ -63,6 +63,10 @@ public class Util {
 
     }
 
+    public static String getFileExtension(File file) {
+        return file.getName().substring(file.getName().lastIndexOf(".") + 1);
+    }
+
     public static String changePathFormat(Context context, String path){
         File internalStorage = Environment.getExternalStorageDirectory();
         String internalStoragePath = internalStorage.getPath();

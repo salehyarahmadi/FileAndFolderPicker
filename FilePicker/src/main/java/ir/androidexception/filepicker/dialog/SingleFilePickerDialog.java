@@ -4,20 +4,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import ir.androidexception.filepicker.R;
 import ir.androidexception.filepicker.adapter.FileAdapter;
 import ir.androidexception.filepicker.databinding.DialogPickerBinding;
@@ -39,12 +44,23 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
     private OnCancelPickerDialogListener onCancelPickerDialogListener;
     private OnConfirmDialogListener onConfirmDialogListener;
     private File file;
+    private List<String> formats = new ArrayList<>();
+
     public SingleFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
                                   OnConfirmDialogListener onConfirmDialogListener) {
         super(context);
         this.context = context;
         this.onCancelPickerDialogListener = onCancelPickerDialogListener;
         this.onConfirmDialogListener = onConfirmDialogListener;
+    }
+
+    public SingleFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
+                                  OnConfirmDialogListener onConfirmDialogListener, List<String> formats) {
+        super(context);
+        this.context = context;
+        this.onCancelPickerDialogListener = onCancelPickerDialogListener;
+        this.onConfirmDialogListener = onConfirmDialogListener;
+        this.formats = formats;
     }
 
 
@@ -60,11 +76,11 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
         fab = binding.fab;
         close = binding.ivClose;
 
-        if(Util.permissionGranted(context)){
+        if (Util.permissionGranted(context)) {
             binding.setPath("Internal Storage" + context.getString(R.string.arrow));
             binding.setBusySpace(Util.bytesToHuman(Util.busyMemory()));
             binding.setTotalSpace(Util.bytesToHuman(Util.totalMemory()));
-            int busySpacePercent = (int)(((float)Util.busyMemory() / Util.totalMemory()) * 100);
+            int busySpacePercent = (int) (((float) Util.busyMemory() / Util.totalMemory()) * 100);
             binding.setBusySpacePercent(busySpacePercent + "%");
             binding.progressView.setProgress(busySpacePercent);
 
@@ -74,7 +90,7 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
     }
 
 
-    private void setupClickListener(){
+    private void setupClickListener() {
         close.setOnClickListener(v -> {
             onCancelPickerDialogListener.onCanceled();
             this.cancel();
@@ -90,10 +106,21 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
         List<Item> items = new ArrayList<>();
         File internalStorage = Environment.getExternalStorageDirectory();
         List<File> children = new ArrayList<>(Arrays.asList(Objects.requireNonNull(internalStorage.listFiles())));
-        for (File file : children){
-            items.add(new Item(file));
+        Log.e("File", String.valueOf(children.size()));
+        for (File file : children) {
+            if (!formats.isEmpty()) {
+                if (formats.contains(Util.getFileExtension(file)) || Util.getFileCategory(file) == Util.FOLDER_CATEGORY) {
+                    items.add(new Item(file));
+                }
+            } else {
+                items.add(new Item(file));
+            }
         }
-        adapter = new FileAdapter(context, items, this, this);
+        if (formats.isEmpty()) {
+            adapter = new FileAdapter(context, items, this, this);
+        } else {
+            adapter = new FileAdapter(context, items, this, this, formats);
+        }
         recyclerViewDirectories.setAdapter(adapter);
         recyclerViewDirectories.setNestedScrollingEnabled(false);
     }
@@ -116,7 +143,7 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
     @Override
     public void onSelected(File f) {
         file = f;
-        if(f==null) fab.setVisibility(View.GONE);
+        if (f == null) fab.setVisibility(View.GONE);
         else fab.setVisibility(View.VISIBLE);
     }
 }
