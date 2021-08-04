@@ -229,14 +229,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             for (File f : children) {
                                 if (!format.isEmpty()) {
                                     if (format.contains(Util.getFileExtension(f)) || Util.getFileCategory(f) == Util.FOLDER_CATEGORY) {
-                                        Log.e("File", "Masuk");
-                                        Log.e("File", format.toString());
-
                                         newItems.add(new Item(f));
                                     }
                                 } else {
                                     newItems.add(new Item(f));
-                                    Log.e("FileAdapter", format.toString());
                                 }
                             }
                         }
