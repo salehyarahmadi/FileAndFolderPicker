@@ -38,11 +38,12 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
     private RecyclerView recyclerViewDirectories;
     private FloatingActionButton fab;
     private ImageView close;
-    private Context context;
+    private ImageView shorting;
+    private final Context context;
     private DialogPickerBinding binding;
     private FileAdapter adapter;
-    private OnCancelPickerDialogListener onCancelPickerDialogListener;
-    private OnConfirmDialogListener onConfirmDialogListener;
+    private final OnCancelPickerDialogListener onCancelPickerDialogListener;
+    private final OnConfirmDialogListener onConfirmDialogListener;
     private File file;
     private List<String> formats = new ArrayList<>();
 
@@ -75,6 +76,7 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
         recyclerViewDirectories = binding.rvDialogPickerDirectories;
         fab = binding.fab;
         close = binding.ivClose;
+        shorting = binding.ivShorting;
 
         if (Util.permissionGranted(context)) {
             binding.setPath("Internal Storage" + context.getString(R.string.arrow));
@@ -100,6 +102,15 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
             onConfirmDialogListener.onConfirmed(file);
             this.cancel();
         });
+
+        shorting.setOnClickListener(v -> {
+            if (adapter.getSorting()) {
+                shorting.setImageResource(R.drawable.ic_ascending);
+            } else {
+                shorting.setImageResource(R.drawable.ic_descending);
+            }
+            adapter.sorting();
+        });
     }
 
     private void setupDirectoriesListRecyclerView() {
@@ -109,7 +120,7 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
         Log.e("File", String.valueOf(children.size()));
         for (File file : children) {
             if (!formats.isEmpty()) {
-                if (formats.contains(Util.getFileExtension(file)) || Util.getFileCategory(file) == Util.FOLDER_CATEGORY) {
+                if (formats.contains(Util.getFileExtension(file)) || file.isDirectory()) {
                     items.add(new Item(file));
                 }
             } else {
@@ -123,6 +134,7 @@ public class SingleFilePickerDialog extends Dialog implements OnPathChangeListen
         }
         recyclerViewDirectories.setAdapter(adapter);
         recyclerViewDirectories.setNestedScrollingEnabled(false);
+        adapter.sorting();
     }
 
     @Override

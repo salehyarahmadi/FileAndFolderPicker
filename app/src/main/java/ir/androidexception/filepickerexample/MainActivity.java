@@ -31,9 +31,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        List<String> Formats = Collections.singletonList(
-                "pdf"
+        List<String> Formats = Arrays.asList(
+                "pdf", "jpg"
         );
+
         Button singleFilePickerButton = findViewById(R.id.btn_single_file_picker);
         singleFilePickerButton.setOnClickListener(view -> {
             if(permissionGranted()) {

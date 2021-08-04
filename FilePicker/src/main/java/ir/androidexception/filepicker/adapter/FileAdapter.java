@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ir.androidexception.filepicker.R;
@@ -28,15 +29,16 @@ import ir.androidexception.filepicker.utility.Util;
 
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
-    private Context context;
+    private final Context context;
     private List<Item> items;
     private LayoutInflater inflater;
-    private OnPathChangeListener onPathChangeListener;
-    private OnSelectItemListener onSelectItemListener;
+    private final OnPathChangeListener onPathChangeListener;
+    private final OnSelectItemListener onSelectItemListener;
     private String currentPath = "";
     private boolean multiFileSelect = false;
     private boolean directorySelect = false;
-    private List<File> files;
+    private boolean ascendingShorting = true;
+    private final List<File> files;
     private List<String> format = new ArrayList<>();
 
     public FileAdapter(Context context, List<Item> items, OnPathChangeListener onPathChangeListener, OnSelectItemListener onSelectItemListener) {
@@ -85,7 +87,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         this.directorySelect = directorySelect;
     }
 
-
     public void select(int position) {
         if (this.multiFileSelect) {
             if (items.get(position).isSelected()) {
@@ -97,7 +98,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                 items.get(position).setSelected(true);
                 files.add(items.get(position).getFile());
             }
-            notifyItemChanged(position);
         } else {
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i).isSelected()) {
@@ -106,8 +106,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                 }
             }
             items.get(position).setSelected(true);
-            notifyItemChanged(position);
         }
+        notifyItemChanged(position);
     }
 
     public void back() {
@@ -135,6 +135,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                 }
 
                 items = itemList;
+                sortingItem();
                 notifyDataSetChanged();
                 currentPath = parent.getPath();
                 onPathChangeListener.onChanged(currentPath);
@@ -144,8 +145,30 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         }
     }
 
+    public void sorting() {
+        if (ascendingShorting) {
+            Collections.sort(items, (o1, o2) -> o1.getFile().getName().compareTo(o2.getFile().getName()));
+        } else {
+            Collections.sort(items, (o1, o2) -> o2.getFile().getName().compareTo(o1.getFile().getName()));
+        }
+        this.ascendingShorting = !this.ascendingShorting;
+        notifyDataSetChanged();
+    }
+
+    public void sortingItem() {
+        if (ascendingShorting) {
+            Collections.sort(items, (o1, o2) -> o2.getFile().getName().compareTo(o1.getFile().getName()));
+        } else {
+            Collections.sort(items, (o1, o2) -> o1.getFile().getName().compareTo(o2.getFile().getName()));
+        }
+    }
+
+    public boolean getSorting() {
+        return ascendingShorting;
+    }
+
     class FileViewHolder extends RecyclerView.ViewHolder {
-        private ItemFileBinding itemFileBinding;
+        private final ItemFileBinding itemFileBinding;
 
         public FileViewHolder(ItemFileBinding itemFileBinding) {
             super(itemFileBinding.getRoot());
@@ -237,6 +260,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             }
                         }
                         items = newItems;
+                        sortingItem();
                         notifyDataSetChanged();
                     }
 

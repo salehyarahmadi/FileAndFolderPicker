@@ -2,17 +2,20 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="item"
             type="ir.androidexception.filepicker.model.Item" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="1dp"
         android:background="@{item.selected ? @color/selected_color_transparent : @color/white}"
-        android:padding="16dp"
-        android:layout_margin="1dp">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/iv_item_file"
@@ -60,6 +63,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_item_file"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             tools:src="@drawable/ic_play_video" />
 
