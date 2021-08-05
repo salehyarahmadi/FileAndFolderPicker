@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="path"
             type="String" />
+
         <variable
             name="busySpace"
             type="String" />
+
         <variable
             name="totalSpace"
             type="String" />
+
         <variable
             name="busySpacePercent"
             type="String" />
     </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -95,12 +101,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@{busySpace}"
-                tools:text="5.04 GB"
                 android:textColor="@color/storage_progress_color"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/progress_view"
-                app:layout_constraintTop_toBottomOf="@+id/progress_view" />
+                app:layout_constraintTop_toBottomOf="@+id/progress_view"
+                tools:text="5.04 GB" />
 
             <!-- Storage Total Space -->
             <TextView
@@ -108,13 +114,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{` / ` + totalSpace}"
-                tools:text=" / 10.00 GB"
                 android:textColor="#c7c7c7"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_busy_space"
                 app:layout_constraintStart_toEndOf="@+id/tv_busy_space"
-                app:layout_constraintTop_toTopOf="@+id/tv_busy_space" />
+                app:layout_constraintTop_toTopOf="@+id/tv_busy_space"
+                tools:text=" / 10.00 GB" />
 
             <!-- Divider -->
             <View
@@ -135,15 +141,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
                 android:lineSpacingExtra="12dp"
                 android:text="@{path}"
-                tools:text="Internal Storage    >"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_shorting"
+                app:layout_constraintEnd_toStartOf="@+id/iv_shorting"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view"
+                tools:text="Internal Storage    >" />
+
+            <!-- Shorting  -->
+            <ImageView
+                android:id="@+id/iv_shorting"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_ascending"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
 
             <!-- Directories List -->
@@ -155,7 +172,7 @@
                 android:layout_marginBottom="16dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/textView5"
+                app:layout_constraintEnd_toEndOf="@+id/iv_shorting"
                 app:layout_constraintStart_toStartOf="@+id/textView5"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
                 app:spanCount="3"
@@ -169,12 +186,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:visibility="gone"
             android:layout_margin="16dp"
-            app:tint="@android:color/white"
-            app:elevation="8dp"
+            android:src="@drawable/ic_done"
+            android:visibility="gone"
             app:backgroundTint="@color/fab_color"
-            android:src="@drawable/ic_done" />
+            app:elevation="8dp"
+            app:tint="@android:color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

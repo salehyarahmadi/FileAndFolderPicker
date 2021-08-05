@@ -9,15 +9,19 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import ir.androidexception.filepicker.R;
 import ir.androidexception.filepicker.adapter.FileAdapter;
 import ir.androidexception.filepicker.databinding.DialogPickerBinding;
@@ -33,12 +37,16 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
     private RecyclerView recyclerViewDirectories;
     private FloatingActionButton fab;
     private ImageView close;
-    private Context context;
+    private ImageView shorting;
+    private final Context context;
     private DialogPickerBinding binding;
     private FileAdapter adapter;
-    private OnCancelPickerDialogListener onCancelPickerDialogListener;
-    private OnConfirmDialogListener onConfirmDialogListener;
+    private final OnCancelPickerDialogListener onCancelPickerDialogListener;
+    private final OnConfirmDialogListener onConfirmDialogListener;
     private List<File> files;
+
+    private List<String> formats = new ArrayList<>();
+
     public MultiFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
                                  OnConfirmDialogListener onConfirmDialogListener) {
         super(context);
@@ -47,6 +55,15 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
         this.onConfirmDialogListener = onConfirmDialogListener;
     }
 
+    public MultiFilePickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
+                                 OnConfirmDialogListener onConfirmDialogListener, List<String> formats) {
+        super(context);
+        this.context = context;
+        this.onCancelPickerDialogListener = onCancelPickerDialogListener;
+        this.onConfirmDialogListener = onConfirmDialogListener;
+        this.formats = formats;
+
+    }
 
 
     @Override
@@ -60,8 +77,9 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
         recyclerViewDirectories = binding.rvDialogPickerDirectories;
         fab = binding.fab;
         close = binding.ivClose;
+        shorting = binding.ivShorting;
 
-        if(Util.permissionGranted(context)) {
+        if (Util.permissionGranted(context)) {
             binding.setPath("Internal Storage" + context.getString(R.string.arrow));
             binding.setBusySpace(Util.bytesToHuman(Util.busyMemory()));
             binding.setTotalSpace(Util.bytesToHuman(Util.totalMemory()));
@@ -77,7 +95,7 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
     }
 
 
-    private void setupClickListener(){
+    private void setupClickListener() {
         close.setOnClickListener(v -> {
             onCancelPickerDialogListener.onCanceled();
             this.cancel();
@@ -85,9 +103,18 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
 
         fab.setOnClickListener(v -> {
             File[] fs = new File[files.size()];
-            for(int i=0; i<files.size(); i++) fs[i] = files.get(i);
+            for (int i = 0; i < files.size(); i++) fs[i] = files.get(i);
             onConfirmDialogListener.onConfirmed(fs);
             this.cancel();
+        });
+
+        shorting.setOnClickListener(v -> {
+            if (adapter.getSorting()) {
+                shorting.setImageResource(R.drawable.ic_ascending);
+            } else {
+                shorting.setImageResource(R.drawable.ic_descending);
+            }
+            adapter.sorting();
         });
     }
 
@@ -95,8 +122,19 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
         List<Item> items = new ArrayList<>();
         File internalStorage = Environment.getExternalStorageDirectory();
         List<File> children = new ArrayList<>(Arrays.asList(Objects.requireNonNull(internalStorage.listFiles())));
-        for (File file : children){
-            items.add(new Item(file));
+        for (File file : children) {
+            if (!formats.isEmpty()) {
+                if (formats.contains(Util.getFileExtension(file)) || file.isDirectory()) {
+                    items.add(new Item(file));
+                }
+            } else {
+                items.add(new Item(file));
+            }
+        }
+        if (formats.isEmpty()) {
+            adapter = new FileAdapter(context, items, this, this);
+        } else {
+            adapter = new FileAdapter(context, items, this, this, formats);
         }
 
 //        items.add(new Item(internalStorage));
@@ -105,10 +143,10 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
 //            items.add(new Item(new File(sdPath)));
 //        }
 
-        adapter = new FileAdapter(context, items, this, this);
         adapter.setMultiFileSelect(true);
         recyclerViewDirectories.setAdapter(adapter);
         recyclerViewDirectories.setNestedScrollingEnabled(false);
+        adapter.sorting();
     }
 
     @Override
@@ -128,10 +166,10 @@ public class MultiFilePickerDialog extends Dialog implements OnPathChangeListene
 
     @Override
     public void onSelected(File f) {
-        if(files.contains(f)) files.remove(f);
+        if (files.contains(f)) files.remove(f);
         else files.add(f);
 
-        if(files.isEmpty()) fab.setVisibility(View.GONE);
+        if (files.isEmpty()) fab.setVisibility(View.GONE);
         else fab.setVisibility(View.VISIBLE);
     }
 }

@@ -10,15 +10,19 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
 import ir.androidexception.filepicker.R;
 import ir.androidexception.filepicker.adapter.FileAdapter;
 import ir.androidexception.filepicker.databinding.DialogPickerBinding;
@@ -33,12 +37,14 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
     private RecyclerView recyclerViewDirectories;
     private FloatingActionButton fab;
     private ImageView close;
-    private Context context;
+    private ImageView shorting;
+    private final Context context;
     private DialogPickerBinding binding;
     private FileAdapter adapter;
-    private OnCancelPickerDialogListener onCancelPickerDialogListener;
-    private OnConfirmDialogListener onConfirmDialogListener;
+    private final OnCancelPickerDialogListener onCancelPickerDialogListener;
+    private final OnConfirmDialogListener onConfirmDialogListener;
     private String path;
+
     public DirectoryPickerDialog(@NonNull Context context, OnCancelPickerDialogListener onCancelPickerDialogListener,
                                  OnConfirmDialogListener onConfirmDialogListener) {
         super(context);
@@ -46,7 +52,6 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
         this.onCancelPickerDialogListener = onCancelPickerDialogListener;
         this.onConfirmDialogListener = onConfirmDialogListener;
     }
-
 
 
     @Override
@@ -60,8 +65,9 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
         recyclerViewDirectories = binding.rvDialogPickerDirectories;
         fab = binding.fab;
         close = binding.ivClose;
+        shorting = binding.ivShorting;
 
-        if(Util.permissionGranted(context)) {
+        if (Util.permissionGranted(context)) {
             binding.setPath("Internal Storage" + context.getString(R.string.arrow));
             binding.setBusySpace(Util.bytesToHuman(Util.busyMemory()));
             binding.setTotalSpace(Util.bytesToHuman(Util.totalMemory()));
@@ -78,9 +84,7 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
     }
 
 
-
-
-    private void setupClickListener(){
+    private void setupClickListener() {
         close.setOnClickListener(v -> {
             onCancelPickerDialogListener.onCanceled();
             this.cancel();
@@ -90,6 +94,15 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
             onConfirmDialogListener.onConfirmed(new File(path));
             this.cancel();
         });
+
+        shorting.setOnClickListener(v -> {
+            if (adapter.getSorting()) {
+                shorting.setImageResource(R.drawable.ic_ascending);
+            } else {
+                shorting.setImageResource(R.drawable.ic_descending);
+            }
+            adapter.sorting();
+        });
     }
 
     private void setupDirectoriesListRecyclerView() {
@@ -97,14 +110,15 @@ public class DirectoryPickerDialog extends Dialog implements OnPathChangeListene
         File internalStorage = Environment.getExternalStorageDirectory();
         path = internalStorage.getPath();
         List<File> children = new ArrayList<>(Arrays.asList(Objects.requireNonNull(internalStorage.listFiles())));
-        for (File file : children){
-            if(file.isDirectory())
+        for (File file : children) {
+            if (file.isDirectory())
                 items.add(new Item(file));
         }
         adapter = new FileAdapter(context, items, this, null);
         adapter.setDirectorySelect(true);
         recyclerViewDirectories.setAdapter(adapter);
         recyclerViewDirectories.setNestedScrollingEnabled(false);
+        adapter.sorting();
     }
 
     @Override
